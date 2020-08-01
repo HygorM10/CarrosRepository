@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -22,9 +23,9 @@ public class CarrosServices {
 		
 	}
 
-	public Optional<CarroDTO> getCarrosById(Long id) {
+	public CarroDTO getCarrosById(Long id) {
 		
-		return iCarros.findById(id).map(CarroDTO::create);
+		return iCarros.findById(id).map(CarroDTO::create).orElseThrow(() -> new com.carros.api.exception.ObjectNotFoundException("Carro não encontrado!"));
 	}
 
 	public List<CarroDTO> getCarrosByTipo(String tipo) {
@@ -67,12 +68,8 @@ public class CarrosServices {
 //		}).orElseThrow(() -> new RuntimeException("Não foi possivel atualizar o registro"));
 	}
 	
-	public boolean delete(Long id) {
-		if(getCarrosById(id).isPresent()) {
-			iCarros.deleteById(id);
-			return true;
-		}
-		return false;
+	public void delete(Long id) {
+		iCarros.deleteById(id);
 	}
 
 //	public List<Carro> getCarrosFake() {
